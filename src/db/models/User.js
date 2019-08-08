@@ -16,7 +16,7 @@ class User extends Sequelize.Model {
                 type: Sequelize.STRING
             },
             userId: {
-                type: Sequelize.STRING
+                type: Sequelize.UUIDV4
             },
             password: {
                 type: Sequelize.STRING
@@ -34,9 +34,9 @@ class User extends Sequelize.Model {
     }
 }
 
-User.sync()
+/* User.sync()
 .then(() => console.info("Connection established with Database"))
-.catch((err) => console.error("Couldn't establish connection.", err))
+.catch((err) => console.error("Couldn't establish connection.", err)) */
 
 module.exports = User;
 

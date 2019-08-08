@@ -20,4 +20,8 @@ const sequelize = new Sequelize('mmern', db.username, db.password, {
     }
 });
 
+sequelize.authenticate()
+.then(() => console.info("Connection established."))
+.catch((err) => console.error("Connection not established, ", err));
+
 module.export = sequelize;

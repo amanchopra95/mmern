@@ -6,10 +6,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//app.use(require('./src/middlewares/Logger').logger);
+
 // Use Routes
 app.get('/', (req,res) => {
     res.send("Index Page");
 })
+//app.use(require('./src/routes/routes'));
 app.use('/users', require('./src/routes/api/users'));
 app.use('/posts', require('./src/routes/api/posts'));
 
