@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const db = require('../db');
 
 class User extends Sequelize.Model {
     static init(sequelize) {
@@ -16,13 +15,16 @@ class User extends Sequelize.Model {
                 type: Sequelize.STRING
             },
             userId: {
-                type: Sequelize.UUIDV4
+                type: Sequelize.UUID,
+                defaultValue: Sequelize.UUIDV4,
+                allowNull: false
             },
             password: {
                 type: Sequelize.STRING
             },
             email: {
                 type: Sequelize.STRING,
+                unique: true,
                 validate: {
                     isEmail: true
                 }
@@ -33,10 +35,6 @@ class User extends Sequelize.Model {
         })
     }
 }
-
-/* User.sync()
-.then(() => console.info("Connection established with Database"))
-.catch((err) => console.error("Couldn't establish connection.", err)) */
 
 module.exports = User;
 

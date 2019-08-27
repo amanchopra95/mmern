@@ -1,15 +1,43 @@
 const router = require('express').Router();
-const authenticate = require('../services/authService');
+const User = require('../db/models/User');
+const authService = require("../services/authService");
+const jwt = require('jsonwebtoken');
 
 router.get('/', (req, res) => {
     return res.json(req);
 })
 
 router.post('/', (req, res) => {
-    let user = req.body.user;
-    let password = req.body.password;
-
-    return authenticate(user, password);
+    let email = req.body.email;
+    User.findOne({
+        where: {
+            email: email
+        }
+    })   
+    .then((user) => {
+        if (!user) {
+            res.status(401).json({message: "User doesn't exist"})
+        } else {
+            return authService.compare2hash(req.body.password, user.password)
+        }
+    }) 
+    .then((match) => {
+        if (!match) res.status(401).json({message: "User or Password does not match!"})
+        let userJson = user.toJSON();
+        let tokenUser = {
+            email: user.email,
+            firstName: userJson.firstName,
+            lastName: userJson.lastName,
+            userId: userJson.id
+        }
+        
+        let token = jwt.sign(tokenUser, "This is a secret");
+        res.json({toeknUser, token});
+    })
+    .catch((err) => {
+        console.error(err);
+        res.json({message: "Unable to connect with Database"});
+    })
 })
 
 module.exports = router;

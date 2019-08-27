@@ -1,7 +1,8 @@
-const rexpress = require('express');
+const express = require('express');
 
-const router = (req, res, next) => {
-    
-}
+const apiRouter = express();
 
-module.exports = router;
+apiRouter.use('/users', require('./api/users'));
+apiRouter.use('/posts', require('./api/posts'));
+
+module.exports = apiRouter;
