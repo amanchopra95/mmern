@@ -20,7 +20,8 @@ class Post extends Sequelize.Model {
             onDelete: "CASCADE",
             foreignKey: {
                 allowNull: false
-            }
+            },
+            as: 'user'
         });
     }
 }
