@@ -31,6 +31,7 @@ class User extends Sequelize.Model {
             },
         },{
             sequelize,
+            tableName: 'user_account',
             modelName: 'user_account'
         })
     }

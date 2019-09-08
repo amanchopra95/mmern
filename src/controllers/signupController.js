@@ -4,10 +4,8 @@ const authService = require('../services/authService');
 const singupService = require('../services/authService');
 
 router.post('/', (req, res) => {
-
     authService.convert2hash(req.body.password)
     .then((hash) => {
-        console.log(hash);
         User.create({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -16,7 +14,7 @@ router.post('/', (req, res) => {
         })
         .then((created) => {
             if (!created) res.status(401).json({message: "User already exists!"})
-            res.json({message: "User Creates"})
+            res.json({message: "User Created"})
         })
     })
     .catch((err) => console.error(err));

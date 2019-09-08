@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const db = require('./src/db/models/index');
 
 const app = express();
 
@@ -24,6 +25,9 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, 'client/public')));
 }
 
-app.listen(5000, function() {
-    console.info("Rocking on port 5000: http://localhost:5000");
+db.sequelize.authenticate(() => console.log("Database connected"))
+.then(() => {
+    app.listen(5000, function() {
+        console.info("Rocking on port 5000: http://localhost:5000");
+    })
 })
