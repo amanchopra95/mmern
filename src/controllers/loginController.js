@@ -14,26 +14,24 @@ router.post('/', (req, res) => {
             email: email
         }
     })   
-    .then((user) => {
+    .then(async (user) => {
         if (!user) {
             res.status(401).json({message: "User doesn't exist"})
         } else {
-            return authService.compare2hash(req.body.password, user.password)
+            let match = await authService.compare2hash(req.body.password, user.password);
+            if (!match) res.status(401).json({message: "User or Password does not match!"})
+            let userJson = user.toJSON();
+            let tokenUser = {
+                email: user.email,
+                firstName: userJson.firstName,
+                lastName: userJson.lastName,
+                userId: userJson.id
+            }
+            
+            let token = jwt.sign(tokenUser, "This is a secret");
+            res.json({tokenUser, token});
         }
     }) 
-    .then((match) => {
-        if (!match) res.status(401).json({message: "User or Password does not match!"})
-        let userJson = user.toJSON();
-        let tokenUser = {
-            email: user.email,
-            firstName: userJson.firstName,
-            lastName: userJson.lastName,
-            userId: userJson.id
-        }
-        
-        let token = jwt.sign(tokenUser, "This is a secret");
-        res.json({toeknUser, token});
-    })
     .catch((err) => {
         console.error(err);
         res.json({message: "Unable to connect with Database"});
