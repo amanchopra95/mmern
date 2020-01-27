@@ -4,6 +4,8 @@
  * Authentication secret keys
  */
 
+require('../../config')();
+
 module.exports = {
     database: process.env.DB_DATABASE,
     username: process.env.DB_USERNAME,

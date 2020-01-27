@@ -1,7 +1,23 @@
 const Sequelize = require('sequelize');
+const Model = require('sequelize').Model;
 const bcrypt = require('bcrypt')
 
-class User extends Sequelize.Model {
+const toJSON = Model.prototype.toJSON;
+
+Model.prototype.toJSON = function ({attributes = []} = {}) {
+    const obj = toJSON.call(this);
+
+    if (!attributes.length) {
+        return obj;
+    }
+
+    return attributes.reduce((result, attribute) => {
+        result[attribute] = obj[attribute];
+        return result;
+    }, {})
+}
+
+class User extends Model {
     static init(sequelize) {
         return super.init({
             firstName: {
@@ -20,6 +36,7 @@ class User extends Sequelize.Model {
             },
             userId: {
                 type: Sequelize.UUID,
+                unique: true,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
                 validate: {
@@ -41,17 +58,15 @@ class User extends Sequelize.Model {
             tableName: 'user_account', 
             modelName: 'user_account',
             hooks: {
-                beforeSave: this.beforeSave
+                beforeSave: async (user, options) => {
+                    if (user.changed('password')) {
+                        let salt = await bcrypt.genSalt(8)
+                        const hashPassword = await bcrypt.hash(user.password, salt)
+                        user.password = hashPassword
+                    }
+                }
             }
         })
-    }
-
-    async beforeSave (user, options) {
-        if (user.changed('password')) {
-            let salt = await bcrypt.genSalt(8)
-            const hashPassword = await bcrypt.hash(user.password, salt)
-            user.password = hashPassword
-        }
     }
 
     get firstName() {
@@ -74,6 +89,9 @@ class User extends Sequelize.Model {
     }
     get userId() {
         return this.userId
+    }
+    set userId(value) {
+        return this.setDataValue('userId', value)
     }
     get password() {
         return this.password

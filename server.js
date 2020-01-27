@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { config } = require('./src/config')
+const config  = require('./src/config')
 const errorHandler = require('./src/middlewares/errorHandler')
 const logger  = require('./src/middlewares/logger')
 // Initializing environment variables
@@ -29,10 +29,11 @@ app.use(errorHandler)
 let server = {}
 
 db.sequelize.authenticate(() => console.log("Database connected"))
+.then(() => db.sequelize.sync())
 .then(() => {
     server = app.listen(5000, function() {
         console.info("Rocking on port 5000: http://localhost:5000");
-    })
+    }) 
 })
 .catch((err) => {
     console.error('Couldn\'t connect to database', err);

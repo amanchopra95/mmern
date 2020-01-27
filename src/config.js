@@ -85,7 +85,5 @@ const NEWLINES_MATCH = /\n|\r|\r\n/
    }
  };
 
- module.exports = {
-   config: config
- }
+ module.exports = config
 

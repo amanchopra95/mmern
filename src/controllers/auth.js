@@ -9,7 +9,19 @@ const User = require('../db/models/User')
  */ 
 
 exports.login = asyncHandler(async (req, res, next) => {
+
+    const { email, password } = req.body
     
+    const user = await User.findOne({ where: {
+        email
+    }})
+
+    if (!user) {
+        return new ErrorResponse('Invalid Email or Password', 400)
+    }
+
+    res.status(200)
+    .json({ success: true, data: user })
 })
 
 /**
@@ -22,7 +34,7 @@ exports.register = asyncHandler(async (req, res, next) => {
 
     // Create User
 
-    const user = await User.findOrCreate({
+    const [user, created] = await User.findOrCreate({
         where: {
             email
         },
@@ -35,15 +47,15 @@ exports.register = asyncHandler(async (req, res, next) => {
         }
     });
 
-    if (!user[1]) {
-       return next(new ErrorResponse('Invalid Username', 400)) 
+    if (!created) {
+       return next(new ErrorResponse('Username already exist', 400)) 
     }
 
     res
         .status(200)
         .json({
             success: true,
-            user: user[0]
+            user: user.toJSON({attributes: ['firstName', 'email', 'phoneNo']})
         })
 })
 
